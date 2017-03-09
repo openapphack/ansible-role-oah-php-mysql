@@ -1,19 +1,17 @@
 ---
-# Variable setup.
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+- include: tasks/oah-install.yml
+  when: oah_command == "install"
 
-- name: Define php_mysql_package.
-  set_fact:
-    php_mysql_package: "{{ __php_mysql_package }}"
-  when: php_mysql_package is not defined
+- include: tasks/oah-update.yml
+  when: oah_command == "update"
 
-# Installation.
-- name: Install PHP MySQL dependencies (Debian).
-  apt:
-    name: "{{ php_mysql_package }}"
-    state: present
-  notify:
-    - restart webserver
-    - restart php-fpm
-  when: ansible_os_family == 'Debian'
+- include: tasks/oah-remove.yml
+  when: oah_command == "remove"
+
+- include: tasks/oah-reset.yml
+  when: oah_command == "reset"
+
+- include: tasks/oah-validate.yml
+  when: oah_command == "validate"
+
+#- include: tasks/oah-{{ oah_command }}.yml

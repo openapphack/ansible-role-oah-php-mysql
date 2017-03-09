@@ -1,13 +1,11 @@
 ---
-- hosts: localhost
-  remote_user: root
-
-  vars:
-    # Use default log file size so Travis CI VM allows MySQL restart.
-    - mysql_innodb_log_file_size: "5M"
-
+- hosts: all
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=yes
+      when: ansible_os_family == 'Debian'
   roles:
     - oah.apache
     - oah.mysql
     - oah.php
-    - ansible-role-oah-php-mysql
+    - role_under_test
